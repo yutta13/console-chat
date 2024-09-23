@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 
 public class ClientHandler {
     private Server server;
@@ -18,29 +19,37 @@ public class ClientHandler {
         return username;
     }
 
+
     public ClientHandler(Server server, Socket socket) throws IOException {
         this.server = server;
         this.socket = socket;
         this.in = new DataInputStream(socket.getInputStream());
         this.out = new DataOutputStream(socket.getOutputStream());
-        userCount++;
-        username = "user" + userCount;
+        int port = socket.getPort();
+        //   userCount++;
+        //     username = "user" + userCount;
         new Thread(() -> {
             try {
                 System.out.println("Клиент подключился ");
+                this.username = in.readUTF();
                 while (true) {
                     String message = in.readUTF();
                     if (message.startsWith("/")) {
-                        if (message.startsWith("/exit")){
+                        if (message.startsWith("/exit")) {
                             sendMessage("/exitok");
                             break;
+                        }}
+                        if (message.startsWith("/w")) {
+                            String[] splitMassage = message.split(" ");
+                            String remoteUserName= splitMassage[1];
+                            String[] remoteMsg = message.split(remoteUserName);
+                             message = remoteMsg[1];
+                            server.secureMessage(username + " : " + message, remoteUserName);
+                        } else {
+                            server.broadcastMessage(username + " : " + message);
                         }
-                        
-
-                    } else {
-                        server.broadcastMessage(username + " : " + message);
                     }
-                }
+
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -51,13 +60,19 @@ public class ClientHandler {
 
     public void sendMessage(String message) {
         try {
-            out.writeUTF(message);
+                        out.writeUTF(message);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void disconnect(){
+//    public String splitMessagetoUser(String message) {
+//        String[] splitMassage2 = message.split(username);
+//        message = splitMassage2[1];
+//        return message;
+//    }
+
+    public void disconnect() {
         server.unsubscribe(this);
         try {
             in.close();

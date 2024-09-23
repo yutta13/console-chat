@@ -11,9 +11,17 @@ public class Client {
     DataInputStream in;
     DataOutputStream out;
 
+    public String getName() {
+        return name;
+    }
+
+    String name;
+
     public Client() throws IOException {
-        Scanner scanner = new Scanner(System.in);
+        System.out.println("Введите свое имя");
         socket = new Socket("localhost", 8189);
+        Scanner scanner = new Scanner(System.in);
+//        name = scanner.nextLine();
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
 

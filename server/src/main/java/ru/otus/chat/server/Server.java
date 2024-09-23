@@ -40,4 +40,14 @@ public class Server {
             client.sendMessage(message);
         }
     }
+
+    public synchronized void secureMessage(String message, String username){
+        for (ClientHandler client : clients) {
+            if (client.getUsername().equals(username)){
+                client.sendMessage(message);
+            }else {
+            System.out.println("User not found");
+        }}
+
+    }
 }
