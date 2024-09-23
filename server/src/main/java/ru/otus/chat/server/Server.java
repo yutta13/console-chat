@@ -41,7 +41,7 @@ public class Server {
         }
     }
 
-    public synchronized void secureMessage(String message, String username){
+    public synchronized void privateMessage(String message, String username){
         for (ClientHandler client : clients) {
             if (client.getUsername().equals(username)){
                 client.sendMessage(message);

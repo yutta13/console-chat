@@ -4,7 +4,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.List;
 
 public class ClientHandler {
     private Server server;
@@ -44,7 +43,7 @@ public class ClientHandler {
                             String remoteUserName= splitMassage[1];
                             String[] remoteMsg = message.split(remoteUserName);
                              message = remoteMsg[1];
-                            server.secureMessage(username + " : " + message, remoteUserName);
+                            server.privateMessage(username + " : " + message, remoteUserName);
                         } else {
                             server.broadcastMessage(username + " : " + message);
                         }
