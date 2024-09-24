@@ -65,12 +65,6 @@ public class ClientHandler {
         }
     }
 
-//    public String splitMessagetoUser(String message) {
-//        String[] splitMassage2 = message.split(username);
-//        message = splitMassage2[1];
-//        return message;
-//    }
-
     public void disconnect() {
         server.unsubscribe(this);
         try {

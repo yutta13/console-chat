@@ -45,9 +45,10 @@ public class Server {
         for (ClientHandler client : clients) {
             if (client.getUsername().equals(username)){
                 client.sendMessage(message);
-            }else {
-            System.out.println("User not found");
-        }}
-
+                return;
+            }
+        }
+        System.out.println("not found");
     }
+
 }
