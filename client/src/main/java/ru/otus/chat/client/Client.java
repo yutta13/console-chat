@@ -11,17 +11,9 @@ public class Client {
     DataInputStream in;
     DataOutputStream out;
 
-    public String getName() {
-        return name;
-    }
-
-    String name;
-
     public Client() throws IOException {
-        System.out.println("Введите свое имя");
-        socket = new Socket("localhost", 8189);
         Scanner scanner = new Scanner(System.in);
-//        name = scanner.nextLine();
+        socket = new Socket("localhost", 8189);
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
 
@@ -31,6 +23,17 @@ public class Client {
                     String message = in.readUTF();
                     if (message.startsWith("/")) {
                         if (message.startsWith("/exitok")) {
+                            break;
+                        }
+                        if (message.startsWith("/authok ")) {
+                            System.out.println("Аутентификация прошла успешно с именем пользователя: " +
+                                    message.split(" ")[1]);
+                        }
+                        if (message.startsWith("/regok ")) {
+                            System.out.println("регистрация прошла успешно с именем пользователя: " +
+                                    message.split(" ")[1]);
+                        }
+                        if (message.startsWith("/removed")) {
                             break;
                         }
                     } else {
@@ -50,10 +53,13 @@ public class Client {
             if (message.startsWith("/exit")) {
                 break;
             }
+            System.out.println("3");
+            if (message.startsWith("/remove")) {
+                break;
+            }
         }
     }
-
-    public void disconnect(){
+    public void disconnect() {
         try {
             in.close();
         } catch (IOException e) {
