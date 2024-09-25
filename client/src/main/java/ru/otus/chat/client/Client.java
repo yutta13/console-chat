@@ -53,7 +53,6 @@ public class Client {
             if (message.startsWith("/exit")) {
                 break;
             }
-            System.out.println("3");
             if (message.startsWith("/remove")) {
                 break;
             }
