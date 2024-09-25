@@ -48,9 +48,9 @@ public class Server {
         }
     }
 
-    public synchronized void privateMessage(String message, String username){
+    public synchronized void privateMessage(String message, String username) {
         for (ClientHandler client : clients) {
-            if (client.getUsername().equals(username)){
+            if (client.getUsername().equals(username)) {
                 client.sendMessage(message);
                 return;
             }
@@ -66,8 +66,9 @@ public class Server {
         }
         return false;
     }
+
     //    «/kick username»
-    public synchronized void kickUser(ClientHandler sender,String remoteUsername){
+    public synchronized void kickUser(ClientHandler sender, String remoteUsername) {
         if (!this.authenticatedProvider.isAdmin(sender.getUsername())) {
             sender.sendMessage("You don't have enough permissions to kick user " + remoteUsername);
             return;
@@ -77,15 +78,15 @@ public class Server {
             return;
         }
         for (ClientHandler client : clients) {
-            if (client.getUsername().equals(remoteUsername)){
-                client.sendMessage(sender.getUsername()+ " blocked " + remoteUsername );
+            if (client.getUsername().equals(remoteUsername)) {
+                client.sendMessage(sender.getUsername() + " blocked " + remoteUsername);
                 client.sendMessage("/removed");
                 clients.remove(client);
-                this.broadcastMessage(remoteUsername + " was removed from chat by " + sender.getUsername() );
+                this.broadcastMessage(remoteUsername + " was removed from chat by " + sender.getUsername());
                 return;
             }
         }
         sender.sendMessage(remoteUsername + " not found");
-        }
     }
+}
 

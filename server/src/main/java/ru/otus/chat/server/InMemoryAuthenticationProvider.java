@@ -4,16 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryAuthenticationProvider implements AuthenticatedProvider {
-    private final String ROLE_ADMIN = "ADMIN";
-    private final String ROLE_USER = "USER";
     private class User {
         private String login;
         private String password;
         private String username;
-        // private UserRoles role;
-        private String role;
+        private UserRoles role;
 
-        public User(String login, String password, String username, String role) {
+        public User(String login, String password, String username, UserRoles role) {
             this.login = login;
             this.password = password;
             this.username = username;
@@ -28,11 +25,11 @@ public class InMemoryAuthenticationProvider implements AuthenticatedProvider {
     public InMemoryAuthenticationProvider(Server server) {
         this.server = server;
         this.users = new ArrayList<>();
-        this.users.add(new User("tom1", "tom1", "tom", ROLE_USER ));
-        this.users.add(new User("mia1", "mia1", "mia", ROLE_USER));
-        this.users.add(new User("roma1", "roma", "roma", ROLE_USER));
-        this.users.add(new User("lulu1", "lulu", "lulu", ROLE_USER));
-        this.users.add(new User("admin", "admin1", "admin", ROLE_ADMIN));
+        this.users.add(new User("tom1", "tom1", "tom", UserRoles.USER));
+        this.users.add(new User("mia1", "mia1", "mia", UserRoles.USER));
+        this.users.add(new User("roma1", "roma", "roma", UserRoles.USER));
+        this.users.add(new User("lulu1", "lulu", "lulu", UserRoles.USER));
+        this.users.add(new User("admin", "admin1", "admin", UserRoles.ADMIN));
     }
 
     @Override
@@ -87,12 +84,13 @@ public class InMemoryAuthenticationProvider implements AuthenticatedProvider {
 
     public boolean isAdmin(String username) {
         for (User u : users) {
-            if (u.username.equals(username) && u.role.equals(ROLE_ADMIN)) {
+            if (u.username.equals(username) && u.role.equals(UserRoles.ADMIN)) {
                 return true;
             }
         }
         return false;
     }
+
     @Override
     public boolean registration(ClientHandler clientHandler, String login, String password, String username) {
         if (login.trim().length() < 3 || password.trim().length() < 6
@@ -109,7 +107,7 @@ public class InMemoryAuthenticationProvider implements AuthenticatedProvider {
             clientHandler.sendMessage("Указанное имя пользователя уже занято");
             return false;
         }
-        users.add(new User(login, password, username, ROLE_USER));
+        users.add(new User(login, password, username, UserRoles.USER));
         clientHandler.setUsername(username);
         server.subscribe(clientHandler);
         clientHandler.sendMessage("/regok " + username);
