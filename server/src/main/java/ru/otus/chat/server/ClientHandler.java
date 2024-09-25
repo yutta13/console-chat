@@ -71,7 +71,6 @@ public class ClientHandler {
                 //цпкл работы
 
                 while (true) {
-                    System.out.println("2");
                     String message = in.readUTF();
                     if (message.startsWith("/")) {
                         if (message.startsWith("/exit")) {
@@ -86,18 +85,7 @@ public class ClientHandler {
                             message = remoteMsg[1];
                             server.privateMessage(username + " : " + message, remoteUserName);
                         }
-
-                        if (message.startsWith("/kick ")) {
-                            String[] splitMassage = message.split(" ");
-                            if (splitMassage.length != 2) {
-                                sendMessage("Некорректный формат данных '/kick username'");
-                            }
-                            String remoteUserName = splitMassage[1];
-                            server.kickUser(this, remoteUserName);
-                            System.out.println("1");
-                        }
                         continue;
-
                     }
                     server.broadcastMessage(username + " : " + message);
                 }

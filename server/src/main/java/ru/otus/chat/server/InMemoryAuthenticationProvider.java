@@ -8,13 +8,11 @@ public class InMemoryAuthenticationProvider implements AuthenticatedProvider {
         private String login;
         private String password;
         private String username;
-        private UserRoles role;
 
-        public User(String login, String password, String username, UserRoles role) {
+        public User(String login, String password, String username) {
             this.login = login;
             this.password = password;
             this.username = username;
-            this.role = role;
         }
 
     }
@@ -25,11 +23,10 @@ public class InMemoryAuthenticationProvider implements AuthenticatedProvider {
     public InMemoryAuthenticationProvider(Server server) {
         this.server = server;
         this.users = new ArrayList<>();
-        this.users.add(new User("tom1", "tom1", "tom", UserRoles.USER));
-        this.users.add(new User("mia1", "mia1", "mia", UserRoles.USER));
-        this.users.add(new User("roma1", "roma", "roma", UserRoles.USER));
-        this.users.add(new User("lulu1", "lulu", "lulu", UserRoles.USER));
-        this.users.add(new User("admin", "admin1", "admin", UserRoles.ADMIN));
+        this.users.add(new User("tom1", "tom1", "tom"));
+        this.users.add(new User("mia1", "mia1", "mia"));
+        this.users.add(new User("roma1", "roma", "roma"));
+        this.users.add(new User("lulu1", "lulu", "lulu"));
     }
 
     @Override
@@ -82,15 +79,6 @@ public class InMemoryAuthenticationProvider implements AuthenticatedProvider {
         return false;
     }
 
-    public boolean isAdmin(String username) {
-        for (User u : users) {
-            if (u.username.equals(username) && u.role.equals(UserRoles.ADMIN)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public boolean registration(ClientHandler clientHandler, String login, String password, String username) {
         if (login.trim().length() < 3 || password.trim().length() < 6
@@ -107,7 +95,7 @@ public class InMemoryAuthenticationProvider implements AuthenticatedProvider {
             clientHandler.sendMessage("Указанное имя пользователя уже занято");
             return false;
         }
-        users.add(new User(login, password, username, UserRoles.USER));
+        users.add(new User(login, password, username));
         clientHandler.setUsername(username);
         server.subscribe(clientHandler);
         clientHandler.sendMessage("/regok " + username);

@@ -33,9 +33,6 @@ public class Client {
                             System.out.println("регистрация прошла успешно с именем пользователя: " +
                                     message.split(" ")[1]);
                         }
-                        if (message.startsWith("/removed")) {
-                            break;
-                        }
                     } else {
                         System.out.println(message);
                     }
@@ -51,10 +48,6 @@ public class Client {
             String message = scanner.nextLine();
             out.writeUTF(message);
             if (message.startsWith("/exit")) {
-                break;
-            }
-            System.out.println("3");
-            if (message.startsWith("/remove")) {
                 break;
             }
         }
