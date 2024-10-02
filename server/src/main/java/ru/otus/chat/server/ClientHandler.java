@@ -4,6 +4,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientHandler {
     private Server server;
@@ -11,7 +14,7 @@ public class ClientHandler {
     private DataInputStream in;
     private DataOutputStream out;
     private String username;
-
+    List<User> users = new ArrayList<>();
     public String getUsername() {
         return username;
     }
@@ -44,7 +47,7 @@ public class ClientHandler {
                                 sendMessage("Неверный формат команды /auth ");
                                 continue;
                             }
-                            if (server.getAuthenticatedProvider()
+                            if (server.getUserService()
                                     .authenticate(this, elements[1], elements[2])) {
                                 break;
                             }
@@ -57,7 +60,7 @@ public class ClientHandler {
                                 sendMessage("Неверный формат команды /reg ");
                                 continue;
                             }
-                            if (server.getAuthenticatedProvider()
+                            if (server.getUserService()
                                     .registration(this, elements[1], elements[2], elements[3])) {
                                 break;
                             }
@@ -93,14 +96,13 @@ public class ClientHandler {
                             }
                             String remoteUserName = splitMassage[1];
                             server.kickUser(this, remoteUserName);
-                            System.out.println("1");
                         }
                         continue;
 
                     }
                     server.broadcastMessage(username + " : " + message);
                 }
-            } catch (IOException e) {
+            } catch (IOException | SQLException e) {
                 e.printStackTrace();
             } finally {
                 disconnect();
@@ -134,7 +136,5 @@ public class ClientHandler {
             throw new RuntimeException(e);
         }
     }
-
-
 }
 

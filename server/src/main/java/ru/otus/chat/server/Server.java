@@ -9,18 +9,20 @@ import java.util.List;
 public class Server {
     private int port;
     private List<ClientHandler> clients;
-    private AuthenticatedProvider authenticatedProvider;
+    private UserService userService;
+
+    public UserService getUserService() {
+        return userService;
+    }
+
+
 
     public Server(int port) {
         this.port = port;
         clients = new ArrayList<>();
-        authenticatedProvider = new InMemoryAuthenticationProvider(this);
-        authenticatedProvider.initialize();
+        userService = new UserServicejdbc(this);
     }
 
-    public AuthenticatedProvider getAuthenticatedProvider() {
-        return authenticatedProvider;
-    }
 
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
@@ -35,6 +37,7 @@ public class Server {
     }
 
     public synchronized void subscribe(ClientHandler clientHandler) {
+       // this.username = username;
         clients.add(clientHandler);
     }
 
@@ -69,10 +72,10 @@ public class Server {
 
     //    «/kick username»
     public synchronized void kickUser(ClientHandler sender, String remoteUsername) {
-        if (!this.authenticatedProvider.isAdmin(sender.getUsername())) {
-            sender.sendMessage("You don't have enough permissions to kick user " + remoteUsername);
-            return;
-        }
+//        if (!this.userService.isAdmin(sender.getUsername()) {
+//            sender.sendMessage("You don't have enough permissions to kick user " + remoteUsername);
+//            return;
+//        }
         if (sender.getUsername().equals(remoteUsername)) {
             sender.sendMessage("You can't kick yourself! ");
             return;
