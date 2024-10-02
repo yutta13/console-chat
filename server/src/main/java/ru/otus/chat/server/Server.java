@@ -9,18 +9,27 @@ import java.util.List;
 public class Server {
     private int port;
     private List<ClientHandler> clients;
+    private UserService userService;
+
+    public UserService getUserService() {
+        return userService;
+    }
+
+
 
     public Server(int port) {
         this.port = port;
         clients = new ArrayList<>();
+        userService = new UserServicejdbc(this);
     }
+
 
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Сервер запущен на порту: " + port);
             while (true) {
                 Socket socket = serverSocket.accept();
-                subscribe(new ClientHandler(this, socket));
+                new ClientHandler(this, socket);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -28,6 +37,7 @@ public class Server {
     }
 
     public synchronized void subscribe(ClientHandler clientHandler) {
+       // this.username = username;
         clients.add(clientHandler);
     }
 
@@ -41,9 +51,9 @@ public class Server {
         }
     }
 
-    public synchronized void privateMessage(String message, String username){
+    public synchronized void privateMessage(String message, String username) {
         for (ClientHandler client : clients) {
-            if (client.getUsername().equals(username)){
+            if (client.getUsername().equals(username)) {
                 client.sendMessage(message);
                 return;
             }
@@ -51,4 +61,35 @@ public class Server {
         System.out.println("not found");
     }
 
+    public boolean isUsernameBusy(String username) {
+        for (ClientHandler client : clients) {
+            if (client.getUsername().equals(username)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //    «/kick username»
+    public synchronized void kickUser(ClientHandler sender, String remoteUsername) {
+//        if (!this.userService.isAdmin(sender.getUsername()) {
+//            sender.sendMessage("You don't have enough permissions to kick user " + remoteUsername);
+//            return;
+//        }
+        if (sender.getUsername().equals(remoteUsername)) {
+            sender.sendMessage("You can't kick yourself! ");
+            return;
+        }
+        for (ClientHandler client : clients) {
+            if (client.getUsername().equals(remoteUsername)) {
+                client.sendMessage(sender.getUsername() + " blocked " + remoteUsername);
+                client.sendMessage("/removed");
+                clients.remove(client);
+                this.broadcastMessage(remoteUsername + " was removed from chat by " + sender.getUsername());
+                return;
+            }
+        }
+        sender.sendMessage(remoteUsername + " not found");
+    }
 }
+
